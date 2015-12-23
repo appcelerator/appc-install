@@ -235,6 +235,13 @@ function main() {
 				// if we get here, we didn't find a version and we need to install it
 				return lib.install(util.getInstallDir(), opts);
 			});
+		} else if (subcommand === 'remove') {
+			return lib.remove(process.argv.slice(3), function (err) {
+				if (err) {
+					debug('remove err');
+				}
+				debug('remove end');
+			});
 		}
 		else {
 			if (opts.version) {
