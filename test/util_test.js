@@ -634,7 +634,11 @@ describe('util', function () {
 	describe('should getProxyServer', function () {
 		var proxy;
 
-		it('no config proxyServer', function () {
+		afterEach(function(){
+			proxy = null;
+		});
+
+		it('no config proxyServer', function() {
 			proxy = util.getProxyServer({});
 			should(proxy).not.be.ok;
 		});
@@ -659,5 +663,68 @@ describe('util', function () {
 			proxy = util.getProxyServer({proxyServer: addr});
 			should(proxy).be.exactly(addr);
 		});
+	});
+
+	describe('should isOutputJson', function() {
+		var result;
+
+		afterEach(function(){
+			result = null;
+		});
+
+		it('no arguments', function() {
+			result = util.isOutputJson();
+			should.exist(result);
+			should(result).not.be.ok;
+		});
+
+		it('array arguments empty', function() {
+			result = util.isOutputJson([]);
+			should.exist(result);
+			should(result).not.be.ok;
+		});
+
+		it('array arguments no -o option', function() {
+			result = util.isOutputJson(['a', 'b', 'c']);
+			should.exist(result);
+			should(result).not.be.ok;
+		});
+
+		it('array arguments -o option none json', function() {
+			result = util.isOutputJson(['a', '-o', 'c']);
+			should.exist(result);
+			should(result).not.be.ok;
+		});
+
+		it('array arguments -o option json', function() {
+			result = util.isOutputJson(['a', '-o', 'json', 'c']);
+			should.exist(result);
+			should(result).be.ok;
+		});
+
+		it('object arguments empty', function() {
+			result = util.isOutputJson({});
+			should.exist(result);
+			should(result).not.be.ok;
+		});
+
+		it('object arguments no -o option', function() {
+			result = util.isOutputJson({ v: true, version: true });
+			should.exist(result);
+			should(result).not.be.ok;
+		});
+
+		it('object arguments -o option none json', function() {
+			result = util.isOutputJson({ v: true, o: true, version: true });
+			should.exist(result);
+			should(result).not.be.ok;
+		});
+
+		it('object arguments -o option json', function() {
+			result = util.isOutputJson({ v: true, o: 'json', version: true });
+			should.exist(result);
+			should(result).be.ok;
+		});
+
 	});
 });

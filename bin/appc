@@ -218,7 +218,7 @@ function main() {
 
 	// Check if there's an update, default updateCheckInterval is 1 day
 	var notifier = updateNotifier({pkg: pkg});
-	if (notifier.update) {
+	if (!util.isOutputJson(opts) && notifier.update) {
 		notifier.notify();
 	}
 
