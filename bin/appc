@@ -1,12 +1,31 @@
 #!/usr/bin/env node
+// jscs:disable jsDoc
 /**
  * This code is closed source and Confidential and Proprietary to
  * Appcelerator, Inc. All Rights Reserved.  This code MUST not be
- * modified, copy or otherwise redistributed without expression
+ * modified, copied or otherwise redistributed without express
  * written permission of Appcelerator. This file is licensed as
  * part of the Appcelerator Platform and governed under the terms
  * of the Appcelerator license agreement.
  */
+var chalk = require('chalk'),
+	semver = require('semver'),
+	pkg = require('../package');
+
+// check Node.js version
+try {
+	if (!semver.satisfies(process.version, pkg.engines.node)) {
+		console.log(chalk.cyan('Appcelerator Command-Line Interface'));
+		console.log('Copyright (c) 2014-' + (new Date().getFullYear()) + ', Appcelerator, Inc.  All Rights Reserved.');
+		console.log('');
+		console.log(chalk.red('ERROR: appc requires Node.js ' + semver.validRange(pkg.engines.node)));
+		console.log('Visit ' + chalk.cyan('http://nodejs.org/') + ' to download a newer version.');
+		console.log('');
+
+		process.exit(1);
+	}
+} catch (e) {}
+
 var fs = require('fs'),
 	path = require('path'),
 	util = require('../lib/util'),
@@ -21,17 +40,19 @@ var fs = require('fs'),
 // backup our process.argv
 process.__argv = [].concat(process.argv);
 
+// set appc npm version
+process.env.APPC_NPM_VERSION = pkg.version;
+
 // set our npm cache directory to point to our own directory which we know is
 // writable and doesn't conflict with other npms installed by the user
 // we set this here so that all child processes will automatically pick them up
 var npmCacheDir = util.getNpmCacheDirectory();
 if (fs.existsSync(npmCacheDir)) {
-	dirError = util.checkDirectory(npmCacheDir,'npm');
-}
-else {
+	dirError = util.checkDirectory(npmCacheDir, 'npm');
+} else {
 	// make sure we write the directory
 	util.ensureDir(npmCacheDir);
-	dirError = util.checkDirectory(npmCacheDir,'npm');
+	dirError = util.checkDirectory(npmCacheDir, 'npm');
 }
 
 // check if we have an error and if so, fail
@@ -48,12 +69,11 @@ process.env.npm_config_prefix = npmCacheDir;
 // error up front
 var installDir = util.getInstallDir();
 if (fs.existsSync(installDir)) {
-	dirError = util.checkDirectory(installDir,'install');
-}
-else {
+	dirError = util.checkDirectory(installDir, 'install');
+} else {
 	// make sure we write the directory
 	util.ensureDir(installDir);
-	dirError = util.checkDirectory(installDir,'install');
+	dirError = util.checkDirectory(installDir, 'install');
 }
 
 // check if we have an error and if so, fail
@@ -61,14 +81,36 @@ if (dirError) {
 	util.fail(dirError);
 }
 
+// cleanup stale install tag
+var installTag = util.getInstallTag();
+if (fs.existsSync(installTag)) {
+	fs.unlinkSync(installTag);
+}
+
 // set an environment to the location of our install directory and bin directory
 process.env.APPC_INSTALL_DIR = installDir;
 process.env.APPC_INSTALL_BIN_DIR = installBin;
 
-debug('install bin is %o',installBin);
+debug('install bin is %o', installBin);
+
+var appcConfig = util.readConfig();
+process.env.APPC_CONFIG_PROXY = util.getProxyServer(appcConfig);
+if (!process.env.APPC_CONFIG_PROXY) {
+	delete process.env.APPC_CONFIG_PROXY;
+}
+
+var cafile = util.getCAfile(appcConfig);
+if (cafile) {
+	process.env.APPC_CONFIG_CAFILE = cafile;
+}
+
+var strictSSL = util.getStrictSSL(appcConfig);
+if (typeof strictSSL === 'boolean') {
+	process.env.APPC_CONFIG_STRICTSSL = strictSSL;
+}
 
 function after(err, installDir, version, installBin) {
-	debug('after called with %o',arguments);
+	debug('after called with %o', arguments);
 
 	if (opts.setup) {
 		// save our version
@@ -78,21 +120,18 @@ function after(err, installDir, version, installBin) {
 
 		// if we don't have this file, we need to prompt for login for first-run
 		if (!fs.existsSync(appcli)) {
-			var chalk = require('../vendor/chalk');
+			var chalk = require('chalk');
 			console.log();
 			console.log(chalk.yellow('Appcelerator login required. Please login now...'));
-			console.log(chalk.yellow(chalk.dim('If you do not yet have an account, please visit '+chalk.underline('http://www.appcelerator.com/signup'))));
+			console.log(chalk.yellow(chalk.dim('If you do not yet have an account, please visit ' + chalk.underline('http://www.appcelerator.com/signup'))));
 			console.log();
-			var args = program.argv.splice(2);
-			// run our login
 			process.argv[2] = 'login';
 			process.argv[3] = '--no-banner';
 			process.argv.length = 4;
-			util.mergeOptsToArgs(progress.argv,opts);
-			debug('calling lib run %s',installBin);
+			util.mergeOptsToArgs(process.argv, opts);
+			debug('calling lib run %s', installBin);
 			lib.run(installBin);
-		}
-		else {
+		} else {
 			// no need to re-run login. we're already setup
 			process.exit(0);
 		}
@@ -113,18 +152,18 @@ var bundledSubcommands = /^(alloy|acs|cloud)$/;
 function subprocess(cmd, installBin) {
 	var which = require('which'),
 		spawn = require('child_process').spawn,
-		pkg = path.join(installBin, '..','..'),
+		pkg = path.join(installBin, '..', '..'),
 		version = path.basename(path.dirname(pkg)),
 		argv = [],
 		bin,
 		env = process.env,
-		argopts = { env: env, stdio:'inherit' };
+		argopts = {env: env, stdio: 'inherit'};
 
 	// re-create args exactly as passed in but remove our subcommand
 	var _args = process.argv.splice(2);
-	for (var c=0;c<_args.length;c++) {
+	for (var c = 0; c < _args.length; c++) {
 		var arg = _args[c];
-		if (arg!==cmd) {
+		if (arg !== cmd) {
 			argv.push(arg);
 		}
 	}
@@ -134,73 +173,87 @@ function subprocess(cmd, installBin) {
 	env.APPC_VERSION_DIR = pkg;
 	env.APPC_SUBPROCESS = 1;
 
-	// attempt to resolve with npm binary. if not installed, will raise exception (which was can safely ignore)
-	try {
-		bin = which.sync(cmd);
-	}
-	catch (E){
+	// use our bundled version
+	switch (cmd) {
+		case 'alloy':
+			bin = path.resolve(path.join(pkg, 'node_modules', 'appc-cli-titanium', 'node_modules', 'alloy', 'bin', 'alloy'));
+			if (!fs.existsSync(bin)) {
+				bin = path.resolve(path.dirname(require.resolve('alloy')) + '/../bin/alloy');
+			}
+			break;
+		case 'cloud':
+		case 'acs':
+			bin = path.resolve(path.join(pkg, 'node_modules', 'arrow', 'node_modules', 'acs', 'bin', 'acs'));
+			if (!fs.existsSync(bin)) {
+				bin = path.resolve(path.dirname(require.resolve('acs')) + '/../bin/acs');
+			}
+			cmd = 'acs';
+			break;
 	}
 
-	// try to find the npm version first (above in which), then fall back to our bundled version if
-	// the user doesn't have them installed globally. this has the advantage that you can use a different
-	// global version if installed already but also doesn't require to be installed if you install appc
-	if (!bin) {
-		switch(cmd) {
-			case 'alloy': {
-				bin = path.resolve(path.join(pkg, 'node_modules','appc-cli-titanium','node_modules','alloy','bin','alloy'));
-				break;
-			}
-			case 'cloud':
-			case 'acs': {
-				bin = path.resolve(path.join(pkg, 'node_modules','arrow','node_modules','acs','bin','acs'));
-				cmd = 'acs';
-				break;
-			}
-		}
-	}
-	
 	if (!fs.existsSync(bin)) {
-		error.failWithError('com.appcelerator.install.binary.missing',bin,pkg,version);
+		error.failWithError('com.appcelerator.install.binary.missing', bin, pkg, version);
 	}
 
-	debug('calling spawn with %s, bin=%s, argv=%j, argopts=%j',process.execPath,bin,argv,argopts);
+	debug('calling spawn with %s, bin=%s, argv=%j, argopts=%j', process.execPath, bin, argv, argopts);
 
 	// for windows, we need to actually run from node since these binaries aren't setup with cmd.exe
-	var childArgs = cmd === 'acs' ? [bin, argv, argopts] : 
+	var childArgs = (path.extname(bin).toLowerCase() === '.cmd') ? [bin, argv, argopts] :
 		[process.execPath, [bin].concat(argv), argopts];
 	var child = spawn.apply(null, childArgs);
-	child.on('error', function(err){
-		error.failWithError('com.appcelerator.install.binary.error',bin,err.message||String(err));
+
+	child.on('error', function (err) {
+		error.failWithError('com.appcelerator.install.binary.error', bin, err.message || String(err));
+	});
+
+	// propagate signals to child process
+	['SIGTERM', 'SIGUSR1', 'SIGUSR2', 'SIGINT', 'SIGHUP', 'SIGQUIT', 'SIGABRT', 'exit'].forEach(function (name) {
+		process.on(name, function () {
+			if (name === 'exit') {
+				child.kill();
+				process.exit(arguments[0]);
+			} else {
+				child.kill(name);
+				process.exit();
+			}
+		});
 	});
 }
 
 function main() {
 
 	var subcommand = args[0];
-	debug('main subcommand %s',subcommand);
+	debug('main subcommand %s', subcommand);
+	opts.version = opts.version || opts.v;
+	opts.output = opts.output || opts.o;
 
 	// see if this is a use command
 	if (process.argv.length > 2) {
-		if (subcommand==='use') {
-			return lib.use(opts, function() {
+		if (subcommand === 'use') {
+			return lib.use(opts, function (err) {
+				if (err) {
+					if (err.name === 'AppCError') {
+						err.failWithStackTrace();
+					}
+					error.failWithError('com.appcelerator.install.download.server.response.error', err.message || String(err));
+				}
 				// if we get here, we didn't find a version and we need to install it
 				return lib.install(util.getInstallDir(), opts);
 			});
-		}
-		else {
+		} else {
 			if (opts.version) {
-				debug('main version found %s',opts.version);
+				debug('main version found %s', opts.version);
 				// if we aren't asking to print out the version but to use a specific version
 				// we will set the version (remove the --version from args) and then run command
 				// with this version
-				if (opts.version!==true) {
+				if (opts.version !== true) {
 					// set it explicitly by passing the version (otherwise will resolve to available)
 					// if it doesn't explicitly find it, will return null and then install below
-					installBin = util.getInstallBinary(opts,opts.version);
-					debug('main explicitly set a version, installBin=%s',installBin);
+					installBin = util.getInstallBinary(opts, opts.version);
+					debug('main explicitly set a version, installBin=%s', installBin);
 					// delete --version so we don't add to pass through args
 					var _args = [];
-					for (var c=0;c<process.argv.length;c++) {
+					for (var c = 0; c < process.argv.length; c++) {
 						var match = /^--version(=?)/.exec(process.argv[c]);
 						if (match) {
 							// if this is --version x.x.x we need to skip the next arg too
@@ -208,13 +261,12 @@ function main() {
 								c++;
 							}
 							continue;
-						}
-						else {
+						} else {
 							_args.push(process.argv[c]);
 						}
 					}
 					process.argv = _args;
-					debug('main set new args to %o',_args);
+					debug('main set new args to %o', _args);
 					if (!installBin) {
 						// doesn't exist so we need to first install and then run it, but do it
 						// here so that after doesn't get used below
@@ -225,7 +277,7 @@ function main() {
 		}
 	}
 	// see if setup
-	if (args[0]==='setup') {
+	if (args[0] === 'setup') {
 		opts.setup = true;
 		installBin = null;
 		debug('main setup found');
@@ -233,18 +285,19 @@ function main() {
 	// if we can't find a suitable install binary, we need to install one
 	if (!installBin || !fs.existsSync(installBin)) {
 		opts.setup = true;
-		debug("main - !installBin or couldn't find it %s",installBin);
+		debug('main - !installBin or couldn\'t find it %s', installBin);
 		lib.install(util.getInstallDir(), opts, after);
-	}
-	// otherwise, we should just run
-	else {
+	} else {
 		// first update check if required
-		util.updateCheck(opts, function(){
+		util.updateCheck(opts, function () {
 
-			// check to see if this is a bundled subcommand
-			if (bundledSubcommands.test(subcommand)){
-				debug("main - bundled subcommand, calling subprocess");
-				return subprocess(subcommand,installBin);
+			// check to see if this is a bundled subcommand and we aren't using a version of the CLI
+			// that wants to tunnel the subcommand itself.
+			var pkg = path.join(installBin, '..', '..'),
+				version = path.basename(path.dirname(pkg));
+			if (semver.lt(version.split('-')[0], '5.2.0') && bundledSubcommands.test(subcommand)) {
+				debug('main - bundled subcommand, calling subprocess');
+				return subprocess(subcommand, installBin);
 			}
 
 			// now run

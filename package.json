@@ -1,18 +1,17 @@
 {
   "name": "appcelerator",
-  "version": "0.3.35",
+  "version": "4.2.9-1",
   "description": "Appcelerator Platform Software installer",
   "main": "index.js",
   "author": "Jeff Haynie",
-  "license": "Appcelerator Software License (non-open source)",
+  "license": "SEE LICENSE IN LICENSE",
   "preferGlobal": true,
   "bin": {
     "appc": "./bin/appc",
     "appcelerator": "./bin/appc"
   },
   "scripts": {
-    "test": "grunt",
-    "preinstall": "node ./bin/update"
+    "test": "grunt"
   },
   "repository": {
     "type": "git",
@@ -28,35 +27,27 @@
     "arrow"
   ],
   "devDependencies": {
-    "ensure-latest": "^1.0.2",
     "grunt": "^0.4.5",
-    "grunt-contrib-clean": "^0.6.0",
-    "grunt-contrib-jshint": "^0.10.0",
-    "grunt-env": "^0.4.2",
-    "grunt-kahvesi": "0.2.0-dev2",
-    "grunt-mocha-test": "^0.12.1",
-    "should": "^4.0.4",
-    "lodash": "^2.4.1"
+    "grunt-appc-js": "^1.0.19",
+    "grunt-contrib-clean": "^0.7.0",
+    "grunt-env": "0.4.4",
+    "grunt-mocha-istanbul": "^3.0.1",
+    "istanbul": "^0.4.1",
+    "lodash": "^3.10.1",
+    "should": "^8.0.2",
+    "mocha": "^2.3.4"
   },
-  "bundleDependencies": [
-    "appc-request-ssl",
-    "chalk",
-    "progress",
-    "tar",
-    "which",
-    "debug",
-    "lodash",
-    "request"
-  ],
   "dependencies": {
-    "appc-request-ssl": "1.0.20",
+    "async": "^1.5.0",
     "chalk": "0.5.1",
     "debug": "^2.1.1",
     "progress": "1.1.8",
+    "request": "^2.55.0",
     "tar": "1.0.3",
-    "which": "1.0.8"
+    "which": "1.0.8",
+    "semver": "~3.0.1"
   },
-  "ensureLatest": [
-    "appc-request-ssl"
-  ]
+  "engines": {
+    "node": ">= 4.0"
+  }
 }

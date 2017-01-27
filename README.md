@@ -2,8 +2,6 @@
 
 This is the installer for the Appcelerator Platform software stack.
 
-> WARNING. This software is not yet released or ready for use. Please check back soon!
-
 ## Installation
 
 Install globally using npm such as (if using Windows, don't use sudo prefix):
@@ -47,6 +45,6 @@ The following versions are available:
 0.0.96     Installed                                Sat Dec 27 2014 17:32:16 GMT-0800 (PST)
 ```
 
-## Legal
+## Licensing
 
-This code is closed source and Confidential and Proprietary to Appcelerator, Inc. All Rights Reserved.  This code MUST not be modified, copy or otherwise redistributed without expression written permission of Appcelerator. This file is licensed as part of the Appcelerator Platform and governed under the terms of the Appcelerator license agreement.  Your right to use this software terminates when you terminate your Appcelerator subscription.
+This code is Confidential and Proprietary to Appcelerator, Inc. All Rights Reserved. This code MUST not be modified, copied or otherwise redistributed without express written permission of Appcelerator. This file is licensed as part of the Appcelerator Platform and governed under the terms of the Appcelerator license agreement.  Your right to use this software terminates when you terminate your Appcelerator subscription.
