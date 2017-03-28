@@ -282,6 +282,11 @@ function main() {
 		installBin = null;
 		debug('main setup found');
 	}
+	// see if test
+	if (args[0]==='test') {
+		require('child_process').spawn('npm', args, {stdio: 'inherit'});
+		return;
+	}
 	// if we can't find a suitable install binary, we need to install one
 	if (!installBin || !fs.existsSync(installBin)) {
 		opts.setup = true;
