@@ -29,10 +29,9 @@
   "devDependencies": {
     "grunt": "^1.0.1",
     "grunt-appc-js": "^1.0.19",
-    "grunt-contrib-clean": "^0.7.0",
+    "grunt-contrib-clean": "^1.0.0",
     "grunt-env": "0.4.4",
-    "grunt-mocha-istanbul": "^3.0.1",
-    "istanbul": "^0.4.1",
+    "grunt-mocha-istanbul": "^5.0.2",
     "lodash": "^3.10.1",
     "should": "^8.0.2",
     "mocha": "^2.3.4",
