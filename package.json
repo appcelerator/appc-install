@@ -11,7 +11,7 @@
     "appcelerator": "./bin/appc"
   },
   "scripts": {
-    "test": "grunt"
+    "test": "JUNIT_REPORT_PATH=junit_report.xml grunt"
   },
   "repository": {
     "type": "git",
@@ -27,7 +27,7 @@
     "arrow"
   ],
   "devDependencies": {
-    "grunt": "^0.4.5",
+    "grunt": "^1.0.1",
     "grunt-appc-js": "^1.0.19",
     "grunt-contrib-clean": "^0.7.0",
     "grunt-env": "0.4.4",
@@ -35,7 +35,8 @@
     "istanbul": "^0.4.1",
     "lodash": "^3.10.1",
     "should": "^8.0.2",
-    "mocha": "^2.3.4"
+    "mocha": "^2.3.4",
+    "mocha-jenkins-reporter": "^0.3.7"
   },
   "dependencies": {
     "async": "^1.5.0",

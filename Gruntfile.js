@@ -50,6 +50,7 @@ module.exports = function (grunt) {
 						'requestSSLFingerprints'
 					],
 					mochaOptions: ['--bail'],
+					reporter: 'mocha-jenkins-reporter',
 					check: {
 						statements: 50,
 						branches: 25,
