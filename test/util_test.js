@@ -448,7 +448,7 @@ describe('util', function () {
 			should(state.written[0]).eql(msg);
 			should(state.written).have.property('length', 1);
 			setTimeout(function () {
-				if (!process.env.TRAVIS) {
+				if (!process.env.TRAVIS || !process.env.JENKINS) {
 					should(state.written).have.property('length', 4);
 				}
 				next();
