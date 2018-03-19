@@ -1,6 +1,6 @@
 {
   "name": "appcelerator",
-  "version": "4.2.12-0",
+  "version": "4.2.12",
   "description": "Appcelerator Platform Software installer",
   "main": "index.js",
   "author": "Jeff Haynie",
@@ -30,6 +30,7 @@
     "appc-license": "^1.0.2",
     "grunt": "^1.0.1",
     "grunt-appc-js": "^1.0.19",
+    "grunt-cli": "^1.2.0",
     "grunt-contrib-clean": "^1.0.0",
     "grunt-env": "0.4.4",
     "grunt-mocha-istanbul": "^5.0.2",
@@ -43,6 +44,7 @@
     "async": "^1.5.0",
     "chalk": "0.5.1",
     "debug": "^2.1.1",
+    "npm-install-checks": "^3.0.0",
     "pac-proxy-agent": "^2.0.0",
     "progress": "1.1.8",
     "request": "^2.55.0",
