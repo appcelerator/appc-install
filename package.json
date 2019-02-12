@@ -11,7 +11,8 @@
     "appcelerator": "./bin/appc"
   },
   "scripts": {
-    "test": "JUNIT_REPORT_PATH=junit_report.xml grunt"
+    "test": "cross-env APPC_TEST=1 JUNIT_REPORT_PATH=junit_report.xml nyc mocha test/**/*_test.js",
+    "lint": "eslint ."
   },
   "repository": {
     "type": "git",
@@ -27,16 +28,14 @@
     "arrow"
   ],
   "devDependencies": {
-    "grunt": "^1.0.3",
-    "grunt-appc-js": "^1.0.19",
-    "grunt-cli": "^1.2.0",
-    "grunt-contrib-clean": "^1.0.0",
-    "grunt-env": "0.4.4",
-    "grunt-mocha-istanbul": "^5.0.2",
-    "istanbul": "^0.4.1",
+    "cross-env": "^5.2.0",
+    "eslint": "^6.2.1",
+    "eslint-config-axway": "^4.3.0",
+    "eslint-plugin-mocha": "^6.1.0",
     "lodash": "^4.17.10",
     "mocha": "^5.2.0",
-    "mocha-jenkins-reporter": "^0.3.7",
+    "mocha-jenkins-reporter": "^0.4.1",
+    "nyc": "^13.2.0",
     "should": "^8.0.2"
   },
   "dependencies": {
