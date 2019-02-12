@@ -43,7 +43,6 @@
     "async": "^1.5.0",
     "chalk": "0.5.1",
     "debug": "^2.1.1",
-    "npm-install-checks": "^3.0.0",
     "pac-proxy-agent": "^3.0.0",
     "progress": "1.1.8",
     "request": "^2.87.0",
