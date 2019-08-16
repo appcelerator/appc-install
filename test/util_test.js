@@ -544,7 +544,7 @@ describe('util', function () {
 		});
 
 		(!process.env.TRAVIS ? it : it.skip)('should updateCheck show msg', function (next) {
-			var config = util.readConfig();
+			var config = util.readConfig() || {};
 			config.lastUpdateCheck = 0;
 			util.setCachedConfig(config);
 
@@ -593,7 +593,7 @@ describe('util', function () {
 		});
 
 		(!process.env.TRAVIS ? it : it.skip)('should updateCheck do not show msg', function (next) {
-			var config = util.readConfig();
+			var config = util.readConfig() || {};
 			config.lastUpdateCheck = 0;
 			util.setCachedConfig(config);
 
