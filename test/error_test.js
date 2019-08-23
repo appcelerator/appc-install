@@ -16,7 +16,8 @@ var should = require('should'),
 
 describe('error', function () {
 
-	var failure = '', exit;
+	var failure = '',
+		exit;
 
 	beforeEach(function () {
 		process._exit = process.exit;
@@ -69,7 +70,7 @@ describe('error', function () {
 	describe('errorcodes', function () {
 
 		// replace args with these placeholders
-		var alpha = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
+		var alpha = [ 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' ];
 
 		function makeArgs(count) {
 			return _.clone(alpha).slice(0, count);
@@ -80,9 +81,9 @@ describe('error', function () {
 			it(errorcode + ' using Error', function () {
 				var argcount = error.argcount || 0;
 				var args = makeArgs(argcount);
-				var err = errorlib.createError.apply(errorlib, [errorcode].concat(args));
+				var err = errorlib.createError.apply(errorlib, [ errorcode ].concat(args));
 				should(err).be.an.object;
-				var message = util.format.apply(null, [error.message].concat(args));
+				var message = util.format.apply(null, [ error.message ].concat(args));
 				should(message).be.equal(err.message);
 				should(err.id).equal(errorcode);
 				should(err.name).equal('AppCError');
@@ -91,9 +92,9 @@ describe('error', function () {
 			it(errorcode + ' using fail', function () {
 				var argcount = error.argcount || 0;
 				var args = makeArgs(argcount);
-				var err = errorlib.createError.apply(errorlib, [errorcode].concat(args));
+				var err = errorlib.createError.apply(errorlib, [ errorcode ].concat(args));
 				should(err).be.an.object;
-				var message = util.format.apply(null, [error.message].concat(args));
+				var message = util.format.apply(null, [ error.message ].concat(args));
 				u.fail(err);
 				should(exit).be.equal(1);
 				should(chalk.stripColor(failure.trim())).equal(message);
@@ -101,9 +102,9 @@ describe('error', function () {
 			it(errorcode + ' using failWithError', function () {
 				var argcount = error.argcount || 0;
 				var args = makeArgs(argcount);
-				var err = errorlib.failWithError.apply(errorlib, [errorcode].concat(args));
+				var err = errorlib.failWithError.apply(errorlib, [ errorcode ].concat(args));
 				should(err).be.an.object;
-				var message = util.format.apply(null, [error.message].concat(args));
+				var message = util.format.apply(null, [ error.message ].concat(args));
 				should(exit).be.equal(1);
 				should(chalk.stripColor(failure.trim())).equal(message + ' [' + errorcode + ']');
 			});

@@ -19,24 +19,24 @@ var latestResult = {
 	success: true,
 	'request-id': '9ff',
 	key: 'result',
-	result: [{id: '55',
+	result: [ { id: '55',
 		name: 'appc-cli/appcelerator',
-		version: '5.1.0'}]
+		version: '5.1.0' } ]
 };
 
 var listResult = {
 	success: true,
 	'request-id': '9ff',
 	key: 'result',
-	result: [{id: '55',
+	result: [ { id: '55',
 		name: 'appc-cli/appcelerator',
-		version: '5.0.0'}]
+		version: '5.0.0' } ]
 };
 
 util.requestJSON = function (location, callback) {
 	var result = {};
 
-	if (typeof(location) === 'object') {
+	if (typeof (location) === 'object') {
 		location = location.url;
 	}
 
@@ -58,7 +58,7 @@ describe('use', function () {
 
 	it('use - list returns none empty array', function (done) {
 		process.exit = done;
-		process.argv = ['node', 'appc', 'use'];
+		process.argv = [ 'node', 'appc', 'use' ];
 		uselib({});
 	});
 
@@ -70,7 +70,7 @@ describe('use', function () {
 			result: []
 		};
 		process.exit = done;
-		process.argv = ['node', 'appc', 'use'];
+		process.argv = [ 'node', 'appc', 'use' ];
 		uselib({});
 	});
 });
