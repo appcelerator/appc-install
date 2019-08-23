@@ -7,8 +7,7 @@
  * part of the Appcelerator Platform and governed under the terms
  * of the Appcelerator license agreement.
  */
-var should = require('should'),
-	util = require('../lib/util'),
+var util = require('../lib/util'),
 	uselib = require('../lib/use');
 
 var requestJSONBackup = util.requestJSON;
@@ -56,12 +55,14 @@ describe('use', function () {
 		util.requestJSON = requestJSONBackup;
 	});
 
+	// eslint-disable-next-line mocha/handle-done-callback
 	it('use - list returns none empty array', function (done) {
 		process.exit = done;
 		process.argv = [ 'node', 'appc', 'use' ];
 		uselib({});
 	});
 
+	// eslint-disable-next-line mocha/handle-done-callback
 	it('use - list returns empty array', function (done) {
 		listResult = {
 			success: true,

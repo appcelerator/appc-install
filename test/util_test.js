@@ -374,7 +374,9 @@ describe('util', function () {
 			var index = 0;
 
 			function deleteNextDir(err) {
-				if (err) { console.error(err); }
+				if (err) {
+					console.error(err);
+				}
 				var entry = DIRS[index++];
 				if (entry) {
 					try {
@@ -488,13 +490,6 @@ describe('util', function () {
 			util.okMessage(false);
 			should(state.written[2]).be.ok;
 			should(state.written).have.property('length', 3);
-		});
-
-		it('should infoMessage', function () {
-			var msg = 'my info message';
-			util.infoMessage(msg);
-			should(state.written[0]).containEql(msg);
-			should(state.written).have.property('length', 1);
 		});
 
 		it('should infoMessage', function () {

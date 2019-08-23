@@ -48,19 +48,19 @@ describe('error', function () {
 	describe('failures', function () {
 
 		it('internal failure on bad error code for createError', function () {
-			var error = errorlib.createError('invalid');
+			errorlib.createError('invalid');
 			should(exit).be.equal(1);
 			should(failure).match(/Internal failure. Unexpected usage of internal command. Please report error code: invalid/);
 		});
 
 		it('internal failure on bad error code for failWithError', function () {
-			var error = errorlib.failWithError('invalid');
+			errorlib.failWithError('invalid');
 			should(exit).be.equal(1);
 			should(failure).match(/Internal failure. Unexpected usage of internal command. Please report error code: invalid/);
 		});
 
 		it('missing parameters', function () {
-			var error = errorlib.createError('com.appcelerator.install.binary.missing');
+			errorlib.createError('com.appcelerator.install.binary.missing');
 			should(exit).be.equal(1);
 			should(failure).match(/Internal failure. Unexpected usage of internal command. Please report error code: com.appcelerator.install.binary.missing\(invalid args\)/);
 		});
@@ -87,7 +87,7 @@ describe('error', function () {
 				should(message).be.equal(err.message);
 				should(err.id).equal(errorcode);
 				should(err.name).equal('AppCError');
-				should(err instanceof Error).be.true;
+				should(err instanceof Error).be.true();
 			});
 			it(errorcode + ' using fail', function () {
 				var argcount = error.argcount || 0;
