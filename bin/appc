@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// jscs:disable jsDoc
+
 /**
  * This code is closed source and Confidential and Proprietary to
  * Appcelerator, Inc. All Rights Reserved.  This code MUST not be
@@ -10,25 +10,16 @@
  */
 var chalk = require('chalk'),
 	semver = require('semver'),
-	pkg = require('../package');
+	pkg = require('../package'),
+	util = require('../lib/util');
 
 // check Node.js version
 try {
-	if (!semver.satisfies(process.version, pkg.engines.node)) {
-		console.log(chalk.cyan('Appcelerator Command-Line Interface'));
-		console.log('Copyright (c) 2014-' + (new Date().getFullYear()) + ', Appcelerator, Inc.  All Rights Reserved.');
-		console.log('');
-		console.log(chalk.red('ERROR: appc requires Node.js ' + semver.validRange(pkg.engines.node)));
-		console.log('Visit ' + chalk.cyan('http://nodejs.org/') + ' to download a newer version.');
-		console.log('');
-
-		process.exit(1);
-	}
+	util.checkNodeVersion(pkg.engines.node);
 } catch (e) {}
 
 var fs = require('fs'),
 	path = require('path'),
-	util = require('../lib/util'),
 	error = require('../lib/error'),
 	lib = require('../lib/index'),
 	debug = require('debug')('appc:bin'),
