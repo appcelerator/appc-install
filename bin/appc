@@ -148,16 +148,18 @@ var bundledSubcommands = /^(alloy|acs|cloud)$/;
  * aren't going to include directly in the appc CLI such that
  * we can still provide more advanced capabilities directly
  * through these underlying CLIs
+ *
+ * @param {string} cmd - command to run
+ * @param {string} installBin - path to appc cli binary
  */
 function subprocess(cmd, installBin) {
-	var which = require('which'),
-		spawn = require('child_process').spawn,
+	var spawn = require('child_process').spawn,
 		pkg = path.join(installBin, '..', '..'),
 		version = path.basename(path.dirname(pkg)),
 		argv = [],
 		bin,
 		env = process.env,
-		argopts = {env: env, stdio: 'inherit'};
+		argopts = { env: env, stdio: 'inherit' };
 
 	// re-create args exactly as passed in but remove our subcommand
 	var _args = process.argv.splice(2);
@@ -198,8 +200,8 @@ function subprocess(cmd, installBin) {
 	debug('calling spawn with %s, bin=%s, argv=%j, argopts=%j', process.execPath, bin, argv, argopts);
 
 	// for windows, we need to actually run from node since these binaries aren't setup with cmd.exe
-	var childArgs = (path.extname(bin).toLowerCase() === '.cmd') ? [bin, argv, argopts] :
-		[process.execPath, [bin].concat(argv), argopts];
+	var childArgs = (path.extname(bin).toLowerCase() === '.cmd') ? [ bin, argv, argopts ]
+		: [ process.execPath, [ bin ].concat(argv), argopts ];
 	var child = spawn.apply(null, childArgs);
 
 	child.on('error', function (err) {
@@ -207,7 +209,7 @@ function subprocess(cmd, installBin) {
 	});
 
 	// propagate signals to child process
-	['SIGTERM', 'SIGUSR1', 'SIGUSR2', 'SIGINT', 'SIGHUP', 'SIGQUIT', 'SIGABRT', 'exit'].forEach(function (name) {
+	[ 'SIGTERM', 'SIGUSR1', 'SIGUSR2', 'SIGINT', 'SIGHUP', 'SIGQUIT', 'SIGABRT', 'exit' ].forEach(function (name) {
 		process.on(name, function () {
 			if (name === 'exit') {
 				child.kill();
@@ -240,46 +242,42 @@ function main() {
 				// if we get here, we didn't find a version and we need to install it
 				return lib.install(util.getInstallDir(), opts);
 			});
-		} else {
-			if (opts.version) {
-				debug('main version found %s', opts.version);
-				// if we aren't asking to print out the version but to use a specific version
-				// we will set the version (remove the --version from args) and then run command
-				// with this version
-				if (opts.version !== true) {
-					// set it explicitly by passing the version (otherwise will resolve to available)
-					// if it doesn't explicitly find it, will return null and then install below
-					installBin = util.getInstallBinary(opts, opts.version);
-					debug('main explicitly set a version, installBin=%s', installBin);
-					// delete --version so we don't add to pass through args
-					var _args = [];
-					for (var c = 0; c < process.argv.length; c++) {
-						var match = /^--version(=?)/.exec(process.argv[c]);
-						if (match) {
-							// if this is --version x.x.x we need to skip the next arg too
-							if (!match[1]) {
-								c++;
-							}
-							continue;
-						} else {
-							_args.push(process.argv[c]);
+		} else if (opts.version) {
+			debug('main version found %s', opts.version);
+			// if we aren't asking to print out the version but to use a specific version
+			// we will set the version (remove the --version from args) and then run command
+			// with this version
+			if (opts.version !== true) {
+				// set it explicitly by passing the version (otherwise will resolve to available)
+				// if it doesn't explicitly find it, will return null and then install below
+				installBin = util.getInstallBinary(opts, opts.version);
+				debug('main explicitly set a version, installBin=%s', installBin);
+				// delete --version so we don't add to pass through args
+				var _args = [];
+				for (var c = 0; c < process.argv.length; c++) {
+					var match = /^--version(=?)/.exec(process.argv[c]);
+					if (match) {
+						// if this is --version x.x.x we need to skip the next arg too
+						if (!match[1]) {
+							c++;
 						}
-					}
-					process.argv = _args;
-					debug('main set new args to %o', _args);
-					if (!installBin) {
-						// doesn't exist so we need to first install and then run it, but do it
-						// here so that after doesn't get used below
-						return lib.install(util.getInstallDir(), opts);
-					}
-				} else {
-					if (!util.getInstallBinary(opts)) {
-						if (opts.output !== 'json') {
-							console.log(chalk.red('No versions are installed.'));
-						}
-						process.exit(0);
+						continue;
+					} else {
+						_args.push(process.argv[c]);
 					}
 				}
+				process.argv = _args;
+				debug('main set new args to %o', _args);
+				if (!installBin) {
+					// doesn't exist so we need to first install and then run it, but do it
+					// here so that after doesn't get used below
+					return lib.install(util.getInstallDir(), opts);
+				}
+			} else if (!util.getInstallBinary(opts)) {
+				if (opts.output !== 'json') {
+					console.log(chalk.red('No versions are installed.'));
+				}
+				process.exit(0);
 			}
 		}
 	}
