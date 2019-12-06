@@ -178,7 +178,12 @@ describe('util', function () {
 		});
 
 		it('parse using default', function () {
+			const originalReadConfig = util.readConfig;
+			util.readConfig = function readConfig () {
+				return null;
+			};
 			should(util.makeURL({}, 'foo')).be.equal('https://registry.platform.axway.com/foo');
+			util.readConfig = originalReadConfig;
 		});
 
 	});
