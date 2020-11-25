@@ -279,14 +279,6 @@ describe('util', function () {
 			should(code).be.equal(1);
 			should(message).be.equal('\n' + chalk.red('a') + '\n');
 		});
-
-		it('with exit code 1 (without color)', function () {
-			chalk.enabled = false;
-			util.fail('a');
-			should(code).be.equal(1);
-			should(message).be.equal('\na\n');
-		});
-
 	});
 
 	describe('should canWriteDir', function () {

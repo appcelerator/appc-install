@@ -11,7 +11,7 @@ var should = require('should'),
 	_ = require('lodash'),
 	u = require('../lib/util'),
 	util = require('util'),
-	chalk = require('chalk'),
+	stripAnsi = require('strip-ansi'),
 	errorlib = require('../lib/error');
 
 describe('error', function () {
@@ -97,7 +97,7 @@ describe('error', function () {
 				var message = util.format.apply(null, [ error.message ].concat(args));
 				u.fail(err);
 				should(exit).be.equal(1);
-				should(chalk.stripColor(failure.trim())).equal(message);
+				should(stripAnsi(failure.trim())).equal(message);
 			});
 			it(errorcode + ' using failWithError', function () {
 				var argcount = error.argcount || 0;
@@ -106,7 +106,7 @@ describe('error', function () {
 				should(err).be.an.object;
 				var message = util.format.apply(null, [ error.message ].concat(args));
 				should(exit).be.equal(1);
-				should(chalk.stripColor(failure.trim())).equal(message + ' [' + errorcode + ']');
+				should(stripAnsi(failure.trim())).equal(message + ' [' + errorcode + ']');
 			});
 		});
 
