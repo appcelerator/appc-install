@@ -39,14 +39,14 @@
     "should": "^13.2.3"
   },
   "dependencies": {
-    "async": "^1.5.0",
+    "async": "^3.2.0",
     "chalk": "0.5.1",
-    "debug": "^2.1.1",
+    "debug": "^4.3.1",
     "npm-install-checks": "^3.0.0",
     "pac-proxy-agent": "^3.0.0",
     "progress": "1.1.8",
     "request": "^2.87.0",
-    "semver": "^6.0.0",
+    "semver": "^7.3.2",
     "tar": "^4.4.4"
   },
   "engines": {
